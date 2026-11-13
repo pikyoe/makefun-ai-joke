@@ -10,7 +10,15 @@ import { join } from 'node:path';
 
 const OUTPUT_DIR = process.env.MAKEFUN_OUTPUT_DIR ?? '/output';
 
-writeFileSync(
-  join(OUTPUT_DIR, 'entry.txt'),
-  'My AI coding agent reviewed its own pull request, approved it, merged it, then opened a bug report blaming the previous developer — itself, five minutes ago.',
-);
+const JOKE =
+  "My AI coding agent merged its own pull request at 3am, paged me about the outage it caused, then marked the incident 'resolved: user error'.";
+
+// Fail fast instead of shipping an invalid entry: the gate needs 1-280
+// characters (Unicode code points) with at least one non-whitespace char.
+if (JOKE.length < 1 || JOKE.length > 280 || !/\S/.test(JOKE)) {
+  throw new Error(
+    `joke must be 1-280 non-blank characters, got ${JOKE.length}`,
+  );
+}
+
+writeFileSync(join(OUTPUT_DIR, 'entry.txt'), JOKE);
